@@ -21,11 +21,12 @@ def askValue(var, Llimit = None, Ulimit = None):
     return val
 
 def verticalMotion():
-    s = null
-    u = null
-    v = null
-    t = null
+    s = None
+    u = None
+    v = None
+    t = None
     knownsList = []
+    remainingVars = []
     print("An object is being thrown from a particular height from a ledge with a particular velocity")
     wait(0.5)
 
@@ -49,7 +50,7 @@ def verticalMotion():
     while True:
         print("Please type the corresponding letters without spaces")
         knowns = input()
-        if len(knowns) == 2 and all(letter in valid_letters for letter in knowns):
+        if len(knowns) == 2 and len(set(knowns)) == 2 and all(letter in valid_letters for letter in knowns):
             break
         print("Please try again")
     if "s" in knowns:
@@ -64,13 +65,91 @@ def verticalMotion():
     if "v" in knowns:
         v = askValue("final velocity")
         knownsList.append("v")
-    
-    while True:
-    `   print("What variable is unkown")
-        wait(0.5)
-        remainingVars = valid_letters[] - knownsList[]
-        print("The remaining variables are:", (remainingVars))`
 
+    for letter in valid_letters:
+        if letter not in knownsList:
+            remainingVars.append(letter)
+    while True:
+        print("What variable is unknown")
+        wait(0.5)
+        print("The remaining variables are:", (remainingVars))
+        unknown = input().lower()
+        if len(unknown) == 1:
+            if unknown in remainingVars:
+                break
+            print("Please pick a valid unkown")
+        print("Please enter a valid input")
+    knownsList.append(unknown)
+
+    if "s" not in knownsList:
+        if unknown == "u":
+            u = v - (a*t)
+        elif unknown == "v":
+            v = u + (a*t)
+        elif unknown == "t":
+            t = (v-u)/a
+    elif "u" not in knownsList:
+        if unknown == "s":
+            s = (v*t) - (0.5*a*(t**2))
+        elif unknown == "v":
+            v = (s/t) + (0.5*a*t)
+        elif unknown == "t":
+            A = (-0.5 * a)
+            B = v
+            C = -s
+            if ((B**2)-(4*A*C)) < 0:
+                print("The object does not reach this height")
+                return
+            else:
+                t1 = (-B-(math.sqrt((B**2)-(4*A*C))))/(2*A)
+                t2 = (-B+(math.sqrt((B**2)-(4*A*C))))/(2*A)
+                if t1 > 0:
+                    t = t1
+                else:
+                    t = t2
+    elif "v" not in knownsList:
+        if unknown == "s":
+            s = (u*t) + (0.5*a*(t**2))
+        elif unknown == "u":
+            u = (s/t) - (0.5*a*t)
+        elif unknown == "t":
+            A = (0.5 * a)
+            B = u
+            C = -s
+            if ((B**2)-(4*A*C)) < 0:
+                print("The object does not reach this height")
+                return
+            else:
+                t1 = (-B-(math.sqrt((B**2)-(4*A*C))))/(2*A)
+                t2 = (-B+(math.sqrt((B**2)-(4*A*C))))/(2*A)
+                if t1 > 0:
+                    t = t1
+                else:
+                    t = t2
+    elif "t" not in knownsList:
+        if unknown == "s":
+            s = ((v**2)-(u**2))/(2*a)
+        elif unknown == "u":
+            if ((v**2)-(2*a*s)) < 0:
+                print("The object does not reach this height")
+                return
+            else:
+                u = math.sqrt((v**2)-(2*a*s))
+        elif unknown == "v":
+            if ((u**2)+(2*a*s)) < 0:
+                print("The object does not reach this height")
+                return
+            else:
+                v = math.sqrt((u**2)+(2*a*s))
+
+    if unknown == "s" and s!=None:
+        print(f"The displacement is {s}m")
+    elif unknown == "u" and u!=None:
+        print(f"The initial velocity is {u}m/s")
+    elif unknown == "v" and v!=None:
+        print(f"The final velocity is {v}m/s")
+    elif unknown == "t" and t!=None:
+        print(f"The time taken is {t}s")
     return
 
 def parabolicMotion():
